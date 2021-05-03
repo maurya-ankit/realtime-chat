@@ -30,13 +30,6 @@ CREATE USER root WITH PASSWORD postgres;
 docker run -p 6379:6379 -d redis:5
 ```
 
-## Now its time to generate build folder required as template in django application as it's excluded from git
-
-```sh
-cd frontend
-npm run relocate
-cd ..
-```
 
 ## Finally
 
