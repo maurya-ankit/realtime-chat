@@ -3,8 +3,8 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 import datetime
-from .models import Membership,Room
-
+from .models import Membership,Room,Chat
+from django.contrib.auth.models import User
 # @database_sync_to_async
 def is_member(user,room):
     try:
@@ -13,6 +13,7 @@ def is_member(user,room):
     except :
         return False
 
+# @database_sync_to_async
 def is_public(room):
     try:
         roomobj = Room.objects.filter(name=room)[0]
@@ -20,15 +21,19 @@ def is_public(room):
     except :
         return False
 
+# @database_sync_to_async
+def save_messages(user,room,message,utc_time):
+    room = Room.objects.get(name=room)
+    user=User.objects.get(username=user)
+    chat = Chat(room=room,message=message,utc_time=utc_time,chatuser=user)
+    chat.save()
+    print("done")
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_name = self.room_name.replace(' ', '_')
         self.room_group_name = 'chat_%s' % self.room_name
         self.user = self.scope["user"]
-        # print(self.user,self.room_name)
-        # print(is_member(self.user,self.room_name))
-        # Join room group
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
@@ -49,10 +54,8 @@ class ChatConsumer(WebsocketConsumer):
         message = text_data_json['message']
         utc_time = datetime.datetime.now(datetime.timezone.utc)
         utc_time = utc_time.isoformat()
+        save_messages(self.user,self.room_name,message,utc_time)
 
-        # self.send(text_data=json.dumps({
-        #     'message': message
-        # }))
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {

@@ -34,3 +34,18 @@ class Membership(TimeStampMixin):
 
     def __str__(self):
         return f"{self.person.username} in {self.room.name}"
+
+
+class Chat(models.Model):
+    room = models.ForeignKey(Room,on_delete=models.CASCADE,related_name="chatroom")
+    message = models.TextField()
+    utc_time = models.DateTimeField()
+    chatuser = models.ForeignKey(User, on_delete = models.CASCADE,related_name="chatperson")
+
+
+    def __str__(self):
+        return self.message
+
+    @property
+    def user(self):
+        return self.chatuser.username

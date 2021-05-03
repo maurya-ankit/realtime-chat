@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Room,Membership
+from .models import Room,Membership,Chat
 class RoomSerializer(serializers.ModelSerializer):
     total_members = serializers.ReadOnlyField()
     admin = serializers.ReadOnlyField()
@@ -24,4 +24,15 @@ class MembershipSerializer(serializers.ModelSerializer):
             'id',
             'room',
             'person',
+        ]
+
+class ChatSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Chat
+        fields = [
+            'message',
+            'utc_time',
+            'user'
         ]

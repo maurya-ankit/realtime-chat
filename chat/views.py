@@ -1,16 +1,15 @@
 from django.shortcuts import render
 from rest_framework import generics
 from django.contrib.auth.models import User
-from .models import Room,Membership
+from .models import Room,Membership,Chat
 from . import serializers
 from rest_framework.response import Response
 from  .permissions import IsOwnerOrReadOnly,RoomOwnerOrReadOnly
 from rest_framework import permissions
 from rest_framework.exceptions import ValidationError,ParseError
-
+from rest_framework.decorators import api_view
 
 class RoomList(generics.ListCreateAPIView):
-    # queryset = Classroom.objects.all()
     serializer_class = serializers.RoomSerializer
     permission_classes = [
         permissions.IsAuthenticated,
@@ -22,8 +21,6 @@ class RoomList(generics.ListCreateAPIView):
         Membership(person=self.request.user,is_Admin=True,room=obj).save()
 
     def get_queryset(self):
-        # queryset = Classroom.objects.filter(members = self.request.user)
-        # return queryset
         return self.request.user.room_set.all()
 
 
@@ -33,8 +30,6 @@ class RoomDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated,RoomOwnerOrReadOnly]
     lookup_field='name'
     def get_queryset(self):
-        # queryset = Classroom.objects.all()
-        # return queryset.filter(members = self.request.user)
         return self.request.user.room_set.all()
 
 
@@ -52,7 +47,6 @@ class MembershipList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = Membership.objects.all()
-        # Getting classroom id from query parameters in url -> "/?classroom=1"
         room = self.request.query_params.get('room', None)
         if room is not None:
             queryset = queryset.filter(room__name=room)
@@ -71,32 +65,10 @@ class MembershipList(generics.ListCreateAPIView):
         else:
             raise ParseError(detail="You are not a member")
 
-
-
-# class MembershipDetail(generics.RetrieveUpdateDestroyAPIView):
-#     serializer_class = serializers.MembershipSerializer
-#     permission_classes = [
-#         permissions.IsAuthenticated,
-#         ]
-        
-#     def get_queryset(self):
-#         queryset = Membership.objects.all()
-#         # Getting classroom id from query parameters in url -> "/?classroom=1"
-#         classroom = self.request.query_params.get('classroom', None)
-#         if classroom is not None:
-#             queryset = queryset.filter(classroom__pk=classroom)
-#         else:
-#             queryset = Membership.objects.none()
-#             raise ParseError(detail="Classroom id not available")
-
-        
-#         status = False
-#         for q in queryset:
-#             if q.person==self.request.user:
-#                 status = True
-#                 break
-
-#         if status:
-#             return queryset
-#         else:
-#             raise ParseError(detail="You are not a member")
+@api_view(['GET'])
+def get_chat(request):
+    if request.method == 'GET':
+        room = request.query_params.get('room', None)
+        chat = Chat.objects.filter(room=Room.objects.get(name=room))
+        serializer = serializers.ChatSerializer(chat, many=True)
+        return Response(serializer.data)
