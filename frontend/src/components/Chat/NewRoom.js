@@ -64,7 +64,7 @@ export default function CardWithIllustration() {
                         Chat
           </Heading>
                     <Text fontSize={'lg'} color={'gray.500'}>
-                        Create or Join a room to start chatting
+                        Create a room to start chatting
           </Text>
                 </Stack>
                 <Stack spacing={4} direction={{ base: 'column', md: 'row' }} w={'full'}>
@@ -101,7 +101,7 @@ export default function CardWithIllustration() {
                         _focus={{ bg: 'blue.500' }}
                         onClick={joinRoom}
                     >
-                        join
+                        create
           </Button>
                 </Stack>
 
