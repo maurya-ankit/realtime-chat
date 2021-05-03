@@ -9,18 +9,38 @@ import {
     Input,
     Button,
 } from '@chakra-ui/react'
+import { useToast } from "@chakra-ui/react"
+
 import api from '../../adaptor/api';
 import { useParams } from 'react-router-dom'
 const AddUser = (props) => {
+    const toast = useToast()
+
     const { id } = useParams()
     const [person, setperson] = useState("")
     const handleSubmit = (e) => {
         e.preventDefault();
         api.post('chat/membership/', { person, 'room': id })
             .then(res => {
+
+                toast({
+                    title: `Added ${person} to room`,
+                    // description: "Try ",
+                    status: "success",
+                    duration: 1000,
+                    isClosable: true,
+                })
                 setperson("")
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                toast({
+                    title: `Unable to ${person} to room`,
+                    description: "Either username is wrong or person is already in room",
+                    status: "error",
+                    duration: 1000,
+                    isClosable: true,
+                })
+            })
     }
     return (
         <Box as="form" mb={6} rounded="lg" shadow="xl" onSubmit={handleSubmit} >

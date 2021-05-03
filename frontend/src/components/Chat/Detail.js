@@ -41,7 +41,14 @@ const Detail = () => {
         readyState,
     } = useWebSocket(socketUrl);
     useEffect(() => {
+        setsocketUrl(`ws://127.0.0.1:8000/ws/chat/${id}/?token=${JSON.parse(localStorage.getItem('user')).token}`)
+        api.get(`chat/messages/?room=${id}`)
+            .then(res => {
+                setmessages(prev => [...res.data, ...prev])
+            })
+            .catch(err => console.log(err))
         setmessages([])
+        document.title = `${id}`.toUpperCase()
     }, [id])
 
     useEffect(() => {
@@ -108,12 +115,12 @@ const Detail = () => {
                 </Box>
 
                 <Spacer />
-                <Stack direction="row" mr={4} display={{ base: "none", md: "flex" }}>
+                <Stack direction="row" mr={4} display={{ base: "none", lg: "flex" }}>
                     <Text>
-                        Members: {roomInfo.total_members}
+                        {roomInfo.total_members && <>{`Members:${roomInfo.total_members} `}</>}
                     </Text>
                     <Text pr={4}>
-                        Group Type: {roomInfo.public ? "Public" : "private"}
+                        {roomInfo.public && <> Group Type: {roomInfo.public ? "Public" : "private"}</>}
                     </Text>
                     <Tag size="lg" colorScheme={connectionStatus === "Open" ? "green" : "red"} borderRadius="full">
                         <Avatar

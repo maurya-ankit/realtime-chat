@@ -11,7 +11,8 @@ import {
   Heading,
   Menu,
   MenuButton,
-  MenuList
+  MenuList,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import {
@@ -37,7 +38,7 @@ function App() {
       <Router>
         <Box textAlign="center" fontSize="xl">
           <Grid minH="100vh">
-            <Flex bg="Highlight" p={4} borderBottomRadius="20" maxH={20} >
+            <Flex bg={useColorModeValue("Highlight", 'gray.700')} p={4} borderBottomRadius="20" maxH={20} >
               <Box p="2">
                 <Heading size="md">Realtime Chat App</Heading>
               </Box>

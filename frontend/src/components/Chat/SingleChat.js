@@ -1,5 +1,5 @@
 import { Avatar } from '@chakra-ui/avatar'
-import { Text, Stack } from '@chakra-ui/react'
+import { Text, Stack, useColorModeValue } from '@chakra-ui/react'
 import React from 'react'
 import Moment from 'react-moment';
 import { useSelector } from 'react-redux'
@@ -14,12 +14,14 @@ const SingleChat = (props) => {
 
                 justifyContent={props.data?.user === user?.username ? "flex-end" : "flex-start"} mx={10}>
                 {props.data?.user === user?.username ?
-                    <Stack direction="row" bg="pink.300" py="3" px={6} borderRadius="30"
+
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
+                    <Stack direction="row" bg={useColorModeValue("linkedin.200", "facebook.600")} py="3" px={6} borderRadius="30"
                         maxWidth="400" alignItems="flex-end"
                         spacing={4}>
 
                         <Stack   >
-                            <Text align="end">
+                            <Text align="end" fontSize="lg">
                                 {props.data.message}
                             </Text>
                             <Text color="gray.500" fontSize="sm" align="end">
@@ -28,7 +30,7 @@ const SingleChat = (props) => {
                             </Text>
                         </Stack>
                         <Stack align="center">
-                            <Avatar src="" name={props.data?.user} bg="blue.100" />
+                            <Avatar src="" name={props.data?.user} size="sm" bg="blue.100" />
                             <Text color="gray.500" fontSize="sm" align="start">
                                 {props.data?.user}
 
@@ -37,11 +39,12 @@ const SingleChat = (props) => {
                     </Stack>
 
                     : <Stack direction="row" spacing={4}
-                        bg="gray.200" py="3" px={6} borderRadius="30" maxWidth="400"
+                        // eslint-disable-next-line react-hooks/rules-of-hooks
+                        bg={useColorModeValue("facebook.100", 'gray.600')} py="3" px={6} borderRadius="30" maxWidth="400"
                         alignItems="flex-end"
                     >
                         <Stack align="center">
-                            <Avatar src="" name={props.data?.user} bg="blue.100" />
+                            <Avatar src="" name={props.data?.user} size="sm" bg="blue.100" />
                             <Text color="gray.500" fontSize="sm" align="start">
                                 {props.data?.user}
 
@@ -49,7 +52,7 @@ const SingleChat = (props) => {
                         </Stack>
                         <Stack>
 
-                            <Text align="start">
+                            <Text align="start" fontSize="lg">
                                 {props.data.message}
                             </Text>
                             <Text color="gray.500" fontSize="sm" align="start">
